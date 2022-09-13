@@ -29,7 +29,7 @@ async def read(user_id):
                                        values={'telegram_id': user_id})
     return [next(result.values()) for result in results]
 
-keyboard1 = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add("👋 Hello!", "💋 Youtube")
+keyboard1 = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add("Категории", "Каталог", "Инфо"
 @dp.message_handler(commands=['start', 'help'])
 async def welcome(message: types.Message):
     await message.reply("Hello! This is Atomy test bot!", reply_markup=keyboard1)
