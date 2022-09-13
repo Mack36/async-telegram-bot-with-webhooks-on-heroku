@@ -2,6 +2,8 @@ import logging
 from aiogram import types
 from aiogram.utils.executor import start_webhook
 from config import bot, dp, WEBHOOK_URL, WEBHOOK_PATH, WEBAPP_HOST, WEBAPP_PORT
+from aiogram.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from db import database
 
 
@@ -26,6 +28,11 @@ async def read(user_id):
                                        'WHERE telegram_id = :telegram_id ',
                                        values={'telegram_id': user_id})
     return [next(result.values()) for result in results]
+
+keyboard1 = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add("👋 Hello!", "💋 Youtube")
+@dp.message_handler(commands=['start', 'help'])
+async def welcome(message: types.Message):
+    await message.reply("Hello! This is Atomy test bot!", reply_markup=keyboard1)
 
 
 @dp.message_handler()
