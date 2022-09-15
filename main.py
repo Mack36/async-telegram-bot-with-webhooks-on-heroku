@@ -32,7 +32,7 @@ async def on_shutdown(dispatcher):
 
 
 def db_load_categories():
-    results = database.fetch_all('SELECT cat_id, cat_name FROM categories ORDER BY cat_id')
+    results = database.fetch_all('SELECT * FROM categories ORDER BY cat_id')
     return results
 
 
@@ -69,7 +69,6 @@ async def cmd_start(message: types.Message):
     keyboard.add("Помощь❓")
     global cats
     cats = await db_load_categories()
-    print(cats)
     us_id = message.from_user.id
     us_name = message.from_user.first_name
     us_sname = message.from_user.last_name
@@ -102,7 +101,6 @@ async def cmd_cat_chosen(message: types.Message):
     itemlist = []
     if state == 1:
         for cat in cats:
-            print(cat)
             if message.text == cat[1]:
                 #await message.reply(f'Выбрана категория: {message.text}')
                 for n in res:
@@ -112,9 +110,7 @@ async def cmd_cat_chosen(message: types.Message):
                 keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
                 for elem in itemlist:
                     keyboard.add(elem[1])
-                print(cat)
                 await message.answer(f'Выбрана категория: {message.text}', reply_markup=keyboard)
-                print(cat)
                 await bot.send_photo(chat_id=message.chat.id, photo=cat[3])
                 state = 2
     if state == 2:
