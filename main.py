@@ -102,6 +102,7 @@ async def cmd_cat_chosen(message: types.Message):
     itemlist = []
     if state == 1:
         for cat in cats:
+            print(cat)
             if message.text == cat[1]:
                 #await message.reply(f'Выбрана категория: {message.text}')
                 for n in res:
@@ -111,6 +112,7 @@ async def cmd_cat_chosen(message: types.Message):
                 keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
                 for elem in itemlist:
                     keyboard.add(elem[1])
+                print(cat)
                 await message.answer(f'Выбрана категория: {message.text}', reply_markup=keyboard)
                 print(cat)
                 await bot.send_photo(chat_id=message.chat.id, photo=cat[3])
