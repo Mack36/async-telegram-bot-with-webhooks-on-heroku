@@ -69,6 +69,7 @@ async def cmd_start(message: types.Message):
     keyboard.add("Помощь❓")
     global cats
     cats = await db_load_categories()
+    print(cats)
     us_id = message.from_user.id
     us_name = message.from_user.first_name
     us_sname = message.from_user.last_name
