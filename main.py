@@ -76,12 +76,12 @@ async def cmd_start(message: types.Message):
 
 
 @dp.message_handler(lambda message: message.text == "Каталог")
-async def cmd_catalogue(message: types.Message):
+def cmd_catalogue(message: types.Message):
     #await message.reply("Выберите категорию:")
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     i = 0
     global cats
-    cats = await db_load_categories()
+    cats = db_load_categories()
     while i < len(cats):
         if len(cats) - i < 2:
             btntmp = cats[i][1]
@@ -89,7 +89,7 @@ async def cmd_catalogue(message: types.Message):
             btntmp = [cats[i][1], cats[i+1][1]]
         i += 2
         keyboard.add(*btntmp)
-    await message.answer("Выберите категорию:", reply_markup=keyboard)
+    message.answer("Выберите категорию:", reply_markup=keyboard)
     global state
     state = 1
 
