@@ -31,18 +31,18 @@ async def on_shutdown(dispatcher):
     await bot.delete_webhook()
 
 
-async def db_load_categories():
-    results = await database.fetch_all('SELECT cat_id, cat_name FROM categories ORDER BY cat_id')
+def db_load_categories():
+    results = database.fetch_all('SELECT cat_id, cat_name FROM categories ORDER BY cat_id')
     return results
 
 
-async def db_load_items(catid):
-    results = await database.fetch_all('SELECT * FROM items where cat_id = %s ORDER BY id' % catid)
+def db_load_items(catid):
+    results = database.fetch_all('SELECT * FROM items where cat_id = %s ORDER BY id' % catid)
     return results
 
 
-async def save_user_start(user_id: int, user_name: str, user_surname: str, username: str):
-    await database.execute(f"INSERT INTO users (id, username, surname, nickname)" 
+def save_user_start(user_id: int, user_name: str, user_surname: str, username: str):
+    database.execute(f"INSERT INTO users (id, username, surname, nickname)" 
                            f"VALUES (:id, :username, :surname, :nickname)",
                            values={'id': user_id, 'username': user_name, 'surname': user_surname, 'nickname': username})
 
@@ -71,7 +71,7 @@ async def cmd_start(message: types.Message):
     us_name = message.from_user.first_name
     us_sname = message.from_user.last_name
     username = message.from_user.username
-    await save_user_start(user_id=us_id, user_name=us_name, user_surname=us_sname, username=username)
+    save_user_start(user_id=us_id, user_name=us_name, user_surname=us_sname, username=username)
     await message.answer("Добро пожаловать! Текст приветствия. Выберите пункт:", reply_markup=keyboard)
 
 
