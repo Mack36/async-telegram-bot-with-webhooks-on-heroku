@@ -79,6 +79,7 @@ async def cmd_start(message: types.Message):
 
 @dp.message_handler(lambda message: message.text == "Каталог")
 async def cmd_catalogue(message: types.Message):
+    global state, res, cats
     #await message.reply("Выберите категорию:")
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     i = 0
@@ -90,7 +91,7 @@ async def cmd_catalogue(message: types.Message):
         i += 2
         keyboard.add(*btntmp)
     await message.answer("Выберите категорию:", reply_markup=keyboard)
-    global state, res
+
     res = await db_load_items()
     state = 1
 
@@ -112,7 +113,7 @@ async def cmd_cat_chosen(message: types.Message):
                     keyboard.add(elem[1])
                 await message.answer(f'Выбрана категория: {message.text}', reply_markup=keyboard)
                 print(cat)
-                #await bot.send_photo(chat_id=message.chat.id, photo=cat[3])
+                await bot.send_photo(chat_id=message.chat.id, photo=cat[3])
                 state = 2
     if state == 2:
         for item in res:
