@@ -37,7 +37,7 @@ def db_load_categories():
 
 
 def db_load_items(catid):
-    results = database.fetch_all('SELECT * FROM items where cat_id = %s ORDER BY id' % catid)
+    results = database.fetch_all('SELECT * FROM items where cat_id = :cat_id ORDER BY id', values={'cat_id': catid})
     return results
 
 
