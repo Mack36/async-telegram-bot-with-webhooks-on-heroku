@@ -33,12 +33,12 @@ async def on_shutdown(dispatcher):
 
 def db_load_categories():
     results = database.fetch_all('SELECT cat_id, cat_name FROM categories ORDER BY cat_id')
-    return results
+    return [next(result.values()) for result in results]
 
 
 def db_load_items():
     results = database.fetch_all('SELECT * FROM items ORDER BY id')
-    return results
+    return [next(result.values()) for result in results]
 
 
 def save_user_start(user_id: int, user_name: str, user_surname: str, username: str):
