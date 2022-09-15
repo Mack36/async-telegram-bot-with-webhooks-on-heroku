@@ -31,14 +31,14 @@ async def on_shutdown(dispatcher):
     await bot.delete_webhook()
 
 
-async def db_load_categories():
-    results = await database.fetch_all('SELECT cat_id, cat_name FROM categories ORDER BY cat_id')
-    return [next(result.values()) for result in results]
+def db_load_categories():
+    results = database.fetch_all('SELECT cat_id, cat_name FROM categories ORDER BY cat_id')
+    return results
 
 
-async def db_load_items():
-    results = await database.fetch_all('SELECT * FROM items ORDER BY id')
-    return [next(result.values()) for result in results]
+def db_load_items():
+    results = database.fetch_all('SELECT * FROM items ORDER BY id')
+    return results
 
 
 def save_user_start(user_id: int, user_name: str, user_surname: str, username: str):
@@ -92,7 +92,6 @@ async def cmd_catalogue(message: types.Message):
         i += 2
         keyboard.add(*btntmp)
     await message.answer("Выберите категорию:", reply_markup=keyboard)
-
     res = await db_load_items()
     state = 1
 
