@@ -67,6 +67,8 @@ async def cmd_start(message: types.Message):
     keyboard.add("О продукции📦", "Акции🎁", "Полезное☝")
     keyboard.add("Об Atomy💫", "Каталог", "Отзывы📢")
     keyboard.add("Помощь❓")
+    global cats
+    cats = await db_load_categories()
     us_id = message.from_user.id
     us_name = message.from_user.first_name
     us_sname = message.from_user.last_name
@@ -80,8 +82,6 @@ async def cmd_catalogue(message: types.Message):
     #await message.reply("Выберите категорию:")
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     i = 0
-    global cats
-    cats = await db_load_categories()
     while i < len(cats):
         if len(cats) - i < 2:
             btntmp = cats[i][1]
@@ -101,7 +101,7 @@ async def cmd_cat_chosen(message: types.Message):
         for cat in cats:
             if message.text == cat[1]:
                 #await message.reply(f'Выбрана категория: {message.text}')
-                res = await db_load_items(cat[0])
+                res = db_load_items(cat[0])
                 #print(res)
                 keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
                 for elem in res:
