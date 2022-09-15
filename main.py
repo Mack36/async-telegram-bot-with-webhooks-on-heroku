@@ -7,52 +7,45 @@ from aiogram.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButt
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from db import database
 
-imgpath_cat = "./img/cats/"
-imgpath_item = "./img/items/"
-imgpath_misc = "./img/misc/"
-conn = sqlite3.connect('db/database.db', check_same_thread=False)
-cursor = conn.cursor()
+#imgpath_cat = "./img/cats/"
+#imgpath_item = "./img/items/"
+#imgpath_misc = "./img/misc/"
+#conn = sqlite3.connect('db/database.db', check_same_thread=False)
+#cursor = conn.cursor()
 
-with open('./db/dbinit.sql', 'r') as sql_file:
-    sql_script = sql_file.read()
-cursor.executescript(sql_script)
-conn.commit()
-
-
-def db_load_categories():
-    return cursor.execute('SELECT cat_id, cat_name FROM categories ORDER BY cat_id').fetchall()
-
-
-def db_load_items(catid):
-    return cursor.execute('SELECT * FROM items where cat_id = %s ORDER BY id' % catid).fetchall()
-
-
-def save_user_start(user_id: int, user_name: str, user_surname: str, username: str):
-    cursor.execute('INSERT INTO users (id, username, surname, nickname) VALUES (?, ?, ?, ?)', (user_id, user_name, user_surname, username))
-    conn.commit()
-
-
-def get_img(type, id):
-    if type == 0:
-        imgpath = imgpath_cat
-    elif type == 1:
-        imgpath = imgpath_item
-    elif type == 2:
-        imgpath = imgpath_misc
-    try:
-        return open(imgpath + id + ".jpg", 'rb')
-    except Exception as exc:
-        print(exc)
+#with open('./db/dbinit.sql', 'r') as sql_file:
+#    sql_script = sql_file.read()
+#cursor.executescript(sql_script)
+#conn.commit()
+#print("DB Import done")
+database.connect()
 
 
 async def on_startup(dispatcher):
-    await database.connect()
+    #await database.connect()
     await bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
 
 
 async def on_shutdown(dispatcher):
     await database.disconnect()
     await bot.delete_webhook()
+
+
+async def db_load_categories():
+    results = await database.fetch_all('SELECT cat_id, cat_name FROM categories ORDER BY cat_id')
+    return results
+
+
+async def db_load_items(catid):
+    results = await database.fetch_all('SELECT * FROM items where cat_id = %s ORDER BY id' % catid)
+    return results
+
+
+async def save_user_start(user_id: int, user_name: str, user_surname: str, username: str):
+    await database.execute(f"INSERT INTO users (id, username, surname, nickname)" 
+                           f"VALUES (:id, :username, :surname, :nickname)",
+                           values={'id': user_id, 'username': user_name, 'surname': user_surname, 'nickname': username})
+
 
 
 async def save(user_id, text):
@@ -74,16 +67,16 @@ async def cmd_start(message: types.Message):
     keyboard.add("О продукции📦", "Акции🎁", "Полезное☝")
     keyboard.add("Об Atomy💫", "Каталог", "Отзывы📢")
     keyboard.add("Помощь❓")
-    await message.answer("Добро пожаловать! Текст приветствия. Выберите пункт:", reply_markup=keyboard)
     us_id = message.from_user.id
     us_name = message.from_user.first_name
     us_sname = message.from_user.last_name
     username = message.from_user.username
-    save_user_start(user_id=us_id, user_name=us_name, user_surname=us_sname, username=username)
+    await save_user_start(user_id=us_id, user_name=us_name, user_surname=us_sname, username=username)
+    await message.answer("Добро пожаловать! Текст приветствия. Выберите пункт:", reply_markup=keyboard)
 
 
 @dp.message_handler(lambda message: message.text == "Каталог")
-async def cmd_catelogue(message: types.Message):
+async def cmd_catalogue(message: types.Message):
     #await message.reply("Выберите категорию:")
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     i = 0
@@ -114,14 +107,14 @@ async def cmd_cat_chosen(message: types.Message):
                 for elem in res:
                     keyboard.add(elem[1])
                 await message.answer(f'Выбрана категория: {message.text}', reply_markup=keyboard)
-                await bot.send_photo(chat_id=message.chat.id, photo=get_img(0, str(cat[0])))
+                await bot.send_photo(chat_id=message.chat.id, photo=cat[3])
                 state = 2
     if state == 2:
         for item in res:
             if message.text == item[1]:
                 keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
                 await message.reply(f'Выбран товар: {message.text}')
-                await bot.send_photo(chat_id=message.chat.id, photo=get_img(1, str(item[0])))
+                await bot.send_photo(chat_id=message.chat.id, photo=item[2])
                 keyboard.add('Заказать✔')
                 await message.answer(f'Цена💵: {item[4]} сум', reply_markup=keyboard)
 
