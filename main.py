@@ -101,7 +101,7 @@ async def cmd_cat_chosen(message: types.Message):
         for cat in cats:
             if message.text == cat[1]:
                 #await message.reply(f'Выбрана категория: {message.text}')
-                res = db_load_items(cat[0])
+                res = await db_load_items(cat[0])
                 #print(res)
                 keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
                 for elem in res:
