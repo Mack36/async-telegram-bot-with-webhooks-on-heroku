@@ -36,8 +36,8 @@ def db_load_categories():
     return results
 
 
-def db_load_items(catid):
-    results = database.fetch_all('SELECT * FROM items where cat_id = :cat_id ORDER BY id', values={'cat_id': catid})
+def db_load_items():
+    results = database.fetch_all('SELECT * FROM items ORDER BY id')
     return results
 
 
@@ -90,21 +90,25 @@ async def cmd_catalogue(message: types.Message):
         i += 2
         keyboard.add(*btntmp)
     await message.answer("Выберите категорию:", reply_markup=keyboard)
-    global state
+    global state, res
+    res = await db_load_items()
     state = 1
 
 
 @dp.message_handler()
 async def cmd_cat_chosen(message: types.Message):
     global state, cats, res
+    itemlist = []
     if state == 1:
         for cat in cats:
             if message.text == cat[1]:
                 #await message.reply(f'Выбрана категория: {message.text}')
-                res = db_load_items(cat[0])
-                #print(res)
+                for n in res:
+                    if n[3] == cat[0]:
+                        itemlist.append(n)
+                # print(res)
                 keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-                for elem in res:
+                for elem in itemlist:
                     keyboard.add(elem[1])
                 await message.answer(f'Выбрана категория: {message.text}', reply_markup=keyboard)
                 await bot.send_photo(chat_id=message.chat.id, photo=cat[3])
