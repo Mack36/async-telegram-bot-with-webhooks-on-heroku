@@ -81,7 +81,7 @@ async def cmd_catalogue(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     i = 0
     global cats
-    cats = db_load_categories()
+    cats = await db_load_categories()
     while i < len(cats):
         if len(cats) - i < 2:
             btntmp = cats[i][1]
