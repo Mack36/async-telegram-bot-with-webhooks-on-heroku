@@ -71,7 +71,7 @@ async def cmd_start(message: types.Message):
     us_name = message.from_user.first_name
     us_sname = message.from_user.last_name
     username = message.from_user.username
-    save_user_start(user_id=us_id, user_name=us_name, user_surname=us_sname, username=username)
+    await save_user_start(user_id=us_id, user_name=us_name, user_surname=us_sname, username=username)
     await message.answer("Добро пожаловать! Текст приветствия. Выберите пункт:", reply_markup=keyboard)
 
 
